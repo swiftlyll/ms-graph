@@ -26,6 +26,6 @@ Connect-MgGraph @auth
 <# SCRIPT #>
 $userEmail = Read-Host -Prompt "Enter user email address"
 $userId = (Get-MgUser -Filter "UserPrincipalName eq '$userEmail'").Id
-$userLicences = Get-MgUserLicenseDetail -UserId $userId | fl
+$userLicences = Get-MgUserLicenseDetail -UserId $userId | Format-List
 
 $userLicences
