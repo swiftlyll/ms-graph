@@ -1,8 +1,10 @@
 <#
-.DESCRIPTION
+.SYNOPSIS
+    Queries MS Graph for the specified user's licenses.
 .NOTES
-    Date: 2025-01-20
-    GitHub: https://github.com/swiftlyll
+    Author:     Kennet
+    Date:       2025-01-20
+    GitHub:     https://github.com/swiftlyll
 #>
 
 <# AUTH #>
