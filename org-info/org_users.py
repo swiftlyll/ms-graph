@@ -1,4 +1,11 @@
-# Date: 2025-01-20
+#!/usr/bin/python
+
+'''
+Author: Kennet
+Date: 2025-01-20
+GitHub: https://github.com/swiftlyll
+Description: Retrives users based on requested attributes.
+'''
 
 import os
 import asyncio
@@ -10,10 +17,11 @@ from msgraph import GraphServiceClient
 import json
 from kiota_serialization_json.json_serialization_writer_factory import JsonSerializationWriterFactory # for json serialization bytes->str->dic
 
+# client
 credentials = ClientSecretCredential(
-    tenant_id = os.environ['TENANT_ID'],
-    client_id = os.environ['CLIENT_ID'],
-    client_secret = os.environ['GRAPH_API_KEY']
+    tenant_id = os.environ["TENANT_ID"],
+    client_id = os.environ["CLIENT_ID"],
+    client_secret = os.environ["GRAPH_API_KEY"]
 )
 scopes = ["https://graph.microsoft.com/.default"] # uses scopes assigned to app in entra
 client = GraphServiceClient(credentials=credentials,scopes=scopes)
@@ -26,24 +34,30 @@ query_params = UsersRequestBuilder.UsersRequestBuilderGetQueryParameters(
 )
 request_config = RequestConfiguration(
     query_parameters = query_params
-) 
+)
 
+# functions
+def convert_dic(graph_output):
+    writer = JsonSerializationWriterFactory().get_serialization_writer("application/json")
+    graph_output.serialize(writer=writer) # coverts "graph_output" to bytes
+    graph_output_bytes = writer.get_serialized_content() # get serialized content and store in variable
+    graph_output_string = graph_output_bytes.decode("utf-8") # convert bytes to string
+    graph_output_dic = json.loads(graph_output_string) # convert string to dic
+    # graph_output_json = json.dumps(graph_output_dic,indent=4) # pretty JSON output for visualization
+    
+    return graph_output_dic
+    # return graph_output_json
+
+# script
 async def get_users():
     users = await client.users.get(request_configuration=request_config)
-    
-    writer = JsonSerializationWriterFactory().get_serialization_writer('application/json')
-    users.serialize(writer=writer) # coverts "users" to bytes
-    users_bytes = writer.get_serialized_content() # get serialized content and store in variable
-    users_string = users_bytes.decode("utf-8") # convert bytes to string
-    users_dic = json.loads(users_string) # convert string to dic
-    # users_json = json.dumps(users_dic,indent=4) # pretty JSON output for visualization
-    
-    for user in users.value: # for user inside the value dictionary
-        print(user.id)
-        
-        # both methods return the same
-        print(user.display_name)
-        print(users_dic['value'][0].get('displayName','Not Available!'))
+    users = convert_dic(graph_output=users)
+
+    for user in users.get("value",'"Value" dictonary does not exist'): # enters nested dic "value" containing user list
+        print(user.get("id","Not Available!"))
+        print(user.get("displayName","Not Available!"))
+        print(user.get("userPrincipalName","Not Available!"))
+        ""
 
 asyncio.run(get_users())
-input('Press ENTER to exit')
+input("Press ENTER to exit")
