@@ -55,6 +55,17 @@ foreach($appVersion in $appInstalledVersions) {
     }
 }
 
+# find devices without app installed
+Write-Output "Fetching devices without $appName installed"
+$devicesAppNotInstalled = Get-MgDeviceManagementManagedDevice -All | Where-Object -FilterScript {$report.DeviceId -notcontains $_.Id}
+$report += foreach($device in $devicesAppNotInstalled) {
+    [PSCustomObject]@{
+        "DeviceId" = $device.Id
+        "DeviceName" = $device.DeviceName
+        "AppVersion" = "This device does not have $appName installed."
+    }
+}
+
 <# Export to CSV#>
 try {
     $appName = $appName.Replace(" ","") # clean whitespace for file name
