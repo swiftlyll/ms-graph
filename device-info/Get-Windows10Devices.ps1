@@ -1,7 +1,7 @@
 <#
 .DESCRIPTION
-    Gets list of Windows 10 devices from Intune based on the OS build version.
-    Windows 11 OS build versions start with 10.0.22000.XXXX onward, anything less will be Windows 10 (assuming no XP or Windows 7 device lol)
+    Gets list of Windows 10 devices from Intune based on the OS build version. Windows 11 OS build versions 
+    start with 10.0.22000.XXXX onward, anything less will be Windows 10 (assuming no XP or Windows 7 devices lol).
 #>
 
 <# AUTH #>
